@@ -13,6 +13,9 @@ describe('<WebPartTitle />', () => {
   let webparttitle: ReactWrapper;
   const dummyTitle = "Dummy Title";
   const dummyClass = "DummyClass";
+  const dummyMoreLink = "See all";
+  const dummyColor = "#ffffff";
+  const dummyPlaceholder = "News";
   const dummyUpdateFnc = sinon.spy((value) => { return value; });
 
   afterEach(() => {
@@ -55,4 +58,41 @@ describe('<WebPartTitle />', () => {
 
     done();
   });
+
+  it('Check more link is shown if function specified', (done) => {
+    webparttitle = mount(<WebPartTitle displayMode={DisplayMode.Read} title={dummyTitle} updateProperty={() => {}}
+    moreLink={()=> <a href="#">{dummyMoreLink}</a>} />);
+    expect(webparttitle.find(`div.${styles.webPartTitle} span`).text()).to.be.equal(dummyTitle);
+    expect(webparttitle.find(`div.${styles.webPartTitle} textarea`)).to.have.length(0);
+    expect(webparttitle.find(`span.${styles.moreLink}`)).to.have.length(1);
+    expect(webparttitle.find(`span.${styles.moreLink} a`)).to.have.length(1);
+    expect(webparttitle.find(`span.${styles.moreLink} a`).text()).to.be.equal(dummyMoreLink);
+    done();
+  });
+
+  it('Check more link is shown if children specified', (done) => {
+    webparttitle = mount(<WebPartTitle displayMode={DisplayMode.Read} title={dummyTitle} updateProperty={() => {}}
+    moreLink={<a href="#">{dummyMoreLink}</a>} />);
+    expect(webparttitle.find(`div.${styles.webPartTitle} span`).text()).to.be.equal(dummyTitle);
+    expect(webparttitle.find(`div.${styles.webPartTitle} textarea`)).to.have.length(0);
+    expect(webparttitle.find(`span.${styles.moreLink}`)).to.have.length(1);
+    expect(webparttitle.find(`span.${styles.moreLink} a`)).to.have.length(1);
+    expect(webparttitle.find(`span.${styles.moreLink} a`).text()).to.be.equal(dummyMoreLink);
+    done();
+  });
+
+  it('Check more link is not shown otherwise', (done) => {
+    webparttitle = mount(<WebPartTitle displayMode={DisplayMode.Read} title={dummyTitle} updateProperty={() => {}} />);
+    expect(webparttitle.find(`div.${styles.webPartTitle} span`).text()).to.be.equal(dummyTitle);
+    expect(webparttitle.find(`div.${styles.webPartTitle} textarea`)).to.have.length(0);
+    expect(webparttitle.find(`span.${styles.moreLink}`)).to.have.length(0);
+    done();
+  });
+
+  it('Check theme\'s color is used if specified', (done) => {
+    webparttitle = mount(<WebPartTitle displayMode={DisplayMode.Edit} title={dummyTitle} updateProperty={dummyUpdateFnc} themeVariant={{ semanticColors: { bodyText: dummyColor }}} />);
+    expect(webparttitle.find(`div.${styles.webPartTitle}`).prop('style')).property("color").to.equal(dummyColor);
+    done();
+  });
+
 });
